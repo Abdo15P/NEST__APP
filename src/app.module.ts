@@ -8,11 +8,13 @@ import { UserModule } from './modules/user/user.module';
 import { CategoryModule } from './modules/category/category.module';
 import { ProductModule } from './product/product.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SharedAuthenticationModule } from './common/modules/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({envFilePath:resolve('./config/.env.development'),isGlobal:true}),
     MongooseModule.forRoot(process.env.DB_URI as string, {serverSelectionTimeoutMS:30000}),
+    SharedAuthenticationModule,
     AuthenticationModule,
     UserModule,
     CategoryModule,

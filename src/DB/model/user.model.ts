@@ -1,6 +1,8 @@
 import { MongooseModule, Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import { GenderEnum, generateHash, ProviderEnum } from "src/common";
+import { GenderEnum,  LanguageEnum,  ProviderEnum, RoleEnum } from "src/common/enums";
+import { OtpDocument } from "./otp.model";
+import {generateHash} from 'src/common'
 
 @Schema({strictQuery:true,timestamps:true,toObject:{virtuals:true},toJSON:{virtuals:true}})
 export class User{
@@ -62,6 +64,13 @@ export class User{
     })
     provider:ProviderEnum;
 
+        @Prop({
+        type:String,
+        enum:RoleEnum, 
+        default:RoleEnum.user
+    })
+    role:RoleEnum;
+
     @Prop({
         type:String,
         enum:GenderEnum, 
@@ -70,18 +79,39 @@ export class User{
     gender:GenderEnum;
 
     @Prop({
+        type:String,
+        enum:LanguageEnum, 
+        default:LanguageEnum.EN
+    })
+    preferredLanguage:LanguageEnum;
+
+    @Prop({
         type:Date,
         required:false,
         
     })
-    changeCredentialTime:Date;
+    changeCredentialsTime:Date;
 
-    
+    @Prop({
+        type:Date,
+        required:false,
+        
+    })
+    confirmedAt:Date;
+
+    @Virtual()
+    otp:OtpDocument[];
 
     
 }
 export type UserDocument= HydratedDocument<User>
 const userSchema = SchemaFactory.createForClass(User)
+
+userSchema.virtual('otp',{
+    localField:'_id',
+    foreignField:'createdBy',
+    ref:'Otp'
+})
 // userSchema.pre('save',async function (next){
 //     if(this.isModified('password')){
 //         this.password= await generateHash(this.password)
