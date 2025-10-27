@@ -2,10 +2,10 @@ import { MongooseModule, Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mo
 import { HydratedDocument } from "mongoose";
 import { GenderEnum,  LanguageEnum,  ProviderEnum, RoleEnum } from "src/common/enums";
 import { OtpDocument } from "./otp.model";
-import {generateHash} from 'src/common'
+import {generateHash, IUser} from 'src/common'
 
 @Schema({strictQuery:true,timestamps:true,toObject:{virtuals:true},toJSON:{virtuals:true}})
-export class User{
+export class User implements IUser{
     @Prop({
         type:String,
         required:true,
@@ -98,6 +98,12 @@ export class User{
         
     })
     confirmedAt:Date;
+    @Prop({
+        type:String,
+       
+        
+    })
+    profilePicture:string;
 
     @Virtual()
     otp:OtpDocument[];
