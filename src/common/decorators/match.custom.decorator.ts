@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { ValidationOptions } from './../../../node_modules/class-validator/types/decorator/ValidationOptions.d';
 import { registerDecorator, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 
@@ -14,6 +15,22 @@ export class MatchBetweenFields<T=any> implements ValidatorConstraintInterface{
     }
     defaultMessage(validationArguments?: ValidationArguments): string {
         return `failed to match src field:: ${validationArguments?.property} with target field:: ${validationArguments?.constraints[0]}`
+    }
+}
+
+@ValidatorConstraint({name:'match_between_fields',async:false})
+export class MongoDBIds implements ValidatorConstraintInterface{
+    validate(ids:Types.ObjectId[], args:ValidationArguments){
+        
+       for( const id of ids){
+        if (!Types.ObjectId.isValid(id)){
+            return false
+        }
+       }
+       return true
+    }
+    defaultMessage(validationArguments?: ValidationArguments): string {
+        return `Invalid mongoDB format`
     }
 }
 

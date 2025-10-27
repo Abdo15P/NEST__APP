@@ -76,7 +76,9 @@ export abstract class DatabaseRepository<TRawDocument, TDocument=HydratedDocumen
         options?: QueryOptions<TDocument> | undefined
         page?:number | "all"
         size?:number
-    }): Promise <Lean<TDocument>[] | HydratedDocument<TDocument>[] | any>{
+    }): Promise <{
+        docsCount?:number,limit?:number,pages?:number,currentPage?: number | undefined,result:TDocument[] | Lean<TDocument>[]
+    }>{
         let docsCount: number | undefined= undefined
         let pages: number | undefined= undefined
 
@@ -145,7 +147,23 @@ export abstract class DatabaseRepository<TRawDocument, TDocument=HydratedDocumen
         update?: UpdateQuery<TDocument>;
         options?: QueryOptions<TDocument> | null
     }): Promise<HydratedDocument<TDocument>| Lean<TDocument> | null>{
+                if(Array.isArray(update)){
+            update.push({
+                $set:{
+                    __v:{$add:["$__v",1]}
+                }
+            })
+            return await this.model.findOneAndUpdate(filter || {},update,options)
+        }
         return this.model.findOneAndUpdate(filter,{...update, $inc:{__v:1}},options)
+    }
+
+    async findOneAndDelete({
+        filter,
+    }:{
+        filter?:RootFilterQuery<TRawDocument>;
+    }): Promise<HydratedDocument<TDocument>| Lean<TDocument> | null>{
+        return this.model.findOneAndDelete(filter ||{})
     }
 
      async deleteOne({
