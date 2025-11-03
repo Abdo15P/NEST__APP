@@ -9,6 +9,8 @@ import * as express  from 'express'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors()
+  app.use("/order/webhook",express.raw({type:'application/json'}))
   app.use("/uploads",express.static(path.resolve("./uploads")))
   app.useGlobalPipes(
     new ValidationPipe({stopAtFirstError:true,whitelist:true,forbidNonWhitelisted:true})

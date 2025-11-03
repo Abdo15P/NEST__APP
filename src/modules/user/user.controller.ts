@@ -27,15 +27,13 @@ export class UserController{
     // }
 
 
-    @UseInterceptors(PreferredLanguageInterceptor)
-    @Auth([RoleEnum.admin,RoleEnum.user])
+    @Auth([RoleEnum.admin,RoleEnum.superAdmin,RoleEnum.user])
     @Get()
-    profile(
-        @Headers() header:any,
-        @User() user:UserDocument):{message:string}{
-        
-        return {message:'Done'}
+    async profile(@User() user:UserDocument):Promise<IResponse<ProfileResponse>>{
+        const profile= await this.userService.profile(user)
+        return successResponse<ProfileResponse>({data:{profile}})
     }
+
 
     @UseInterceptors(FileInterceptor('profileImage',cloudFileUpload({storageApproach:StorageEnum.disk,validation:fileValidation.image,fileSize:2})))
     @Auth([RoleEnum.user])

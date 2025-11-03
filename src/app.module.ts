@@ -12,6 +12,9 @@ import { SharedAuthenticationModule } from './common/modules/auth.module';
 import { S3Service } from './common';
 
 import { BrandModule } from './modules/brand/brand.module';
+import { CartModule } from './modules/cart/cart.module';
+import { CouponModule } from './modules/coupon/coupon.module';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -22,7 +25,10 @@ import { BrandModule } from './modules/brand/brand.module';
     UserModule,
     BrandModule,
     CategoryModule,
-    ProductModule],
+    ProductModule,
+    CartModule,
+    CouponModule,
+    OrderModule],
   controllers: [AppController],
   providers: [AppService,S3Service],
 })
